@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dos radios, un gol — Cabo Verde 2–2 Argentina</title>
+<style>
+  :root{
+    --cream:#EDE9DF; --cream2:#F4F1E8; --grey:#C2C6C2; --grey2:#ADB2AD;
+    --grey3:#8E938E; --dark:#3A3D3A; --ink:#2B2D2B; --accent:#D0342C;
+    --panel:#FBFAF5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--cream);
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:var(--ink); padding:34px 22px 60px;
+  }
+  .head{max-width:1180px;margin:0 auto 26px;}
+  .head h1{font-size:21px;font-weight:600;letter-spacing:.4px;}
+  .head p{font-size:13px;color:var(--grey3);margin-top:6px;max-width:70ch;line-height:1.5;}
+  .kicker{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--grey3);margin-bottom:8px;}
+
+  .radios{display:flex;flex-wrap:wrap;gap:26px;justify-content:center;max-width:1180px;margin:0 auto;}
+  .radio{
+    flex:1 1 470px;max-width:575px;
+    background:linear-gradient(178deg,#CDD1CC,#B6BAB5 60%,#A8ADA8);
+    border-radius:16px;
+    box-shadow:0 18px 40px rgba(40,42,40,.28), inset 0 1px 0 rgba(255,255,255,.55);
+    padding:16px;
+  }
+  .face{
+    background:var(--cream2);
+    border-radius:8px;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.18);
+    padding:18px;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:14px;
+    align-items:center;
+    position:relative;
+  }
+  /* rejilla de puntos */
+  .grill{
+    align-self:stretch;
+    border-radius:4px;
+    background-image:radial-gradient(circle at 50% 50%, rgba(60,62,58,.55) 1.6px, transparent 2.1px);
+    background-size:11px 11px;
+    background-position:0 0;
+    min-height:290px;
+    position:relative;
+  }
+  .brand{
+    position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+    background:var(--cream2);padding:2px 10px;border-radius:2px;
+    font-size:11px;font-weight:700;letter-spacing:3px;color:var(--dark);
+  }
+  .dialwrap{position:relative;width:300px;height:300px;}
+  canvas.dial{position:absolute;inset:0;width:100%;height:100%;}
+  .knob{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:64px;height:64px;border-radius:50%;
+    background:radial-gradient(circle at 38% 32%,#FFFFFF,#E8E6DE 68%,#C9C7BE);
+    border:1px solid #B9B7AE;
+    box-shadow:0 3px 9px rgba(0,0,0,.30);
+    cursor:pointer;font-size:17px;color:var(--dark);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .knob:active{transform:translate(-50%,-50%) scale(.96);}
+
+  .under{
+    display:flex;align-items:center;gap:14px;
+    padding:12px 6px 2px;
+  }
+  .miniknob{
+    width:30px;height:30px;border-radius:50%;
+    background:radial-gradient(circle at 38% 32%,#FFF,#E6E4DC 65%,#C6C4BB);
+    border:1px solid #B4B2A9;box-shadow:0 2px 5px rgba(0,0,0,.28);
+    cursor:pointer;flex:0 0 auto;font-size:9px;color:var(--grey3);
+    display:flex;align-items:center;justify-content:center;font-weight:700;
+  }
+  .miniknob:active{transform:scale(.94);}
+  .scale{flex:1;position:relative;height:30px;}
+  .scale input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;cursor:pointer;position:relative;z-index:2;
+  }
+  .scale input::-webkit-slider-runnable-track{height:4px;background:repeating-linear-gradient(90deg,var(--grey3) 0 1px,transparent 1px 9px),linear-gradient(#D8D5CB,#D8D5CB);border-radius:2px;margin-top:0px;}
+  .scale input::-webkit-slider-thumb{-webkit-appearance:none;width:5px;height:20px;background:var(--accent);margin-top:-8px;border-radius:1px;}
+  .scale input::-moz-range-track{height:4px;background:#D8D5CB;border-radius:2px;}
+  .scale input::-moz-range-thumb{width:5px;height:20px;background:var(--accent);border:none;border-radius:1px;}
+  .scale .tlab{position:absolute;top:22px;left:0;font-size:9px;color:var(--grey3);letter-spacing:1px;}
+  .scale .tlab.r{left:auto;right:0;}
+
+  .meters{
+    display:grid;grid-template-columns:1.4fr 1fr 1fr 1.1fr;gap:10px;
+    background:var(--dark);border-radius:6px;padding:10px 12px;margin-top:12px;
+  }
+  .meter .lab{font-size:8.5px;letter-spacing:1.8px;text-transform:uppercase;color:#9EA39E;margin-bottom:5px;}
+  .meter .val{font-size:15px;font-weight:600;color:#F2EFE6;font-variant-numeric:tabular-nums;min-height:19px;}
+  .meter .val small{font-size:9px;color:#9EA39E;font-weight:400;}
+  .bar{height:4px;background:#565A56;border-radius:2px;margin-top:6px;overflow:hidden;}
+  .bar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#7FB069,#E8C547 70%,#D0342C);border-radius:2px;transition:width .08s linear;}
+  .regionval{color:#E8C547 !important;font-size:11px !important;letter-spacing:1px;text-transform:uppercase;}
+
+  .transcript{
+    margin-top:10px;background:var(--panel);border-radius:6px;padding:10px 14px;
+    min-height:52px;font-size:13px;line-height:1.45;color:var(--ink);
+    border:1px solid #E0DCCF;font-style:italic;
+  }
+  .transcript .tt{font-style:normal;font-size:9px;letter-spacing:1.5px;color:var(--grey3);text-transform:uppercase;display:block;margin-bottom:3px;}
+
+  canvas.timeline{width:100%;height:74px;display:block;margin-top:10px;border-radius:6px;background:var(--panel);border:1px solid #E0DCCF;cursor:crosshair;}
+
+  .simul{max-width:1180px;margin:14px auto 0;text-align:center;font-size:11px;color:var(--grey3);}
+  .simul label{cursor:pointer;letter-spacing:1px;}
+
+  .analysis{
+    max-width:1180px;margin:42px auto 0;background:var(--panel);
+    border-radius:12px;padding:34px 38px;border:1px solid #E2DED1;
+    box-shadow:0 8px 26px rgba(40,42,40,.08);
+  }
+  .analysis h2{font-size:15px;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;color:var(--dark);}
+  .analysis h3{font-size:13px;margin:22px 0 8px;color:var(--dark);}
+  .analysis p{font-size:13.5px;line-height:1.7;color:#43463F;max-width:92ch;margin-bottom:10px;}
+  .analysis table{border-collapse:collapse;margin:14px 0 6px;font-size:12.5px;width:100%;max-width:760px;}
+  .analysis th,.analysis td{border:1px solid #DDD8C9;padding:7px 12px;text-align:left;}
+  .analysis th{background:#EFEBDF;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;}
+  .analysis td:first-child{font-weight:600;}
+  .note{
+    margin-top:20px;background:#F4EFE2;border-left:3px solid #C9A227;
+    padding:14px 18px;border-radius:0 6px 6px 0;
+  }
+  .note p{font-size:12.5px;margin-bottom:8px;}
+  .note p:last-child{margin-bottom:0;}
+  .foot{max-width:1180px;margin:26px auto 0;font-size:10.5px;color:var(--grey3);line-height:1.6;}
+  @media (max-width:640px){
+    .face{grid-template-columns:1fr;justify-items:center;}
+    .grill{width:100%;min-height:90px;}
+    .meters{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="kicker">Análisis de narración deportiva · Copa Mundial FIFA 2026 · 16avos de final</div>
+  <h1>Dos radios, un gol — Sidny Lopes Cabral, Cabo Verde 2–2 Argentina</h1>
+  <p>La misma jugada narrada por TUDN y por TV Azteca Deportes. El anillo de cada dial es el espectro real del audio
+  (48 bandas mel calculadas cada 100&nbsp;ms) sincronizado con la reproducción; la aguja roja del dial es el punto de reproducción.
+  Presiona la perilla central para reproducir.</p>
+</div>
+
+<div class="radios">
+  <!-- Las radios se generan por JS -->
+</div>
+<div class="simul">
+  <label><input type="checkbox" id="simul"> reproducción simultánea (por defecto, al reproducir una radio se pausa la otra)</label>
+</div>
+
+<div class="analysis" id="analysis"></div>
+
+<div class="foot">
+  Proyecto personal de análisis. Fuentes: TUDN México (“¡EL GOL DE SU VIDA!…”, 144&nbsp;s) y TV Azteca Deportes (“🔥 ¡GOL INFERNAL DE CABO VERDE!…”, 120&nbsp;s), YouTube.
+  Los archivos <code>tudn.mp3</code> y <code>canal2.mp3</code> deben estar en la misma carpeta que este HTML.
+</div>
+
+<script>
+const DATA = __DATA__;
+const TRANSCRIPTS = __TRANSCRIPTS__;
+const REGIONS = {
+  tudn: [
+    {t0:0,   t1:27,  lab:"construcción"},
+    {t0:27,  t1:41,  lab:"grito de gol"},
+    {t0:41,  t1:80,  lab:"celebración poética"},
+    {t0:80,  t1:146, lab:"análisis"}
+  ],
+  azteca: [
+    {t0:0,   t1:28,  lab:"relato jugada a jugada"},
+    {t0:28,  t1:53,  lab:"grito de gol"},
+    {t0:53,  t1:122, lab:"celebración y análisis"}
+  ]
+};
+const META = {
+  tudn:   {title:"TUDN", sub:"transmisión · relator + comentarista", file:"tudn.mp3"},
+  azteca: {title:"TV AZTECA", sub:"highlights · relator + comentarista", file:"canal2.mp3"}
+};
+const KEYS = ["tudn","azteca"];
+const HOP = 0.1, NB = 48;
+
+// ---------- construcción del DOM ----------
+const radiosEl = document.querySelector(".radios");
+const R = {}; // estado por radio
+
+KEYS.forEach(key => {
+  const m = META[key];
+  const el = document.createElement("div");
+  el.className = "radio";
+  el.innerHTML = `
+    <div class="face">
+      <div class="grill"><div class="brand">${m.title}</div></div>
+      <div class="dialwrap">
+        <canvas class="dial" width="600" height="600"></canvas>
+        <button class="knob" title="reproducir / pausar">▶</button>
+      </div>
+    </div>
+    <div class="under">
+      <div class="miniknob back" title="-5 s">−5</div>
+      <div class="scale">
+        <input type="range" min="0" max="1000" value="0">
+        <span class="tlab cur">0:00</span><span class="tlab r">${fmt(DATA[key].dur)}</span>
+      </div>
+      <div class="miniknob fwd" title="+5 s">+5</div>
+    </div>
+    <div class="meters">
+      <div class="meter"><div class="lab">Volumen dBFS</div><div class="val vdb">–</div><div class="bar"><i></i></div></div>
+      <div class="meter"><div class="lab">Tono F0</div><div class="val vf0">–</div></div>
+      <div class="meter"><div class="lab">Centroide</div><div class="val vce">–</div></div>
+      <div class="meter"><div class="lab">Fase</div><div class="val regionval vre">–</div></div>
+    </div>
+    <div class="transcript"><span class="tt">transcripción automática (aproximada)</span><span class="tx">—</span></div>
+    <canvas class="timeline" width="1100" height="148"></canvas>
+  `;
+  radiosEl.appendChild(el);
+
+  const audio = new Audio(m.file);
+  audio.preload = "auto";
+
+  const st = R[key] = {
+    key, el, audio,
+    dial: el.querySelector("canvas.dial").getContext("2d"),
+    tl:   el.querySelector("canvas.timeline"),
+    knob: el.querySelector(".knob"),
+    range: el.querySelector("input[type=range]"),
+    cur:  el.querySelector(".tlab.cur"),
+    vdb: el.querySelector(".vdb"), vf0: el.querySelector(".vf0"),
+    vce: el.querySelector(".vce"), vre: el.querySelector(".vre"),
+    bari: el.querySelector(".bar i"),
+    tx:  el.querySelector(".transcript .tx"),
+    smooth: new Float32Array(NB), sdb: -60, seeking:false
+  };
+
+  st.knob.addEventListener("click", () => {
+    if (audio.paused) {
+      if (!document.getElementById("simul").checked)
+        KEYS.filter(k=>k!==key).forEach(k=>R[k].audio.pause());
+      audio.play();
+    } else audio.pause();
+  });
+  audio.addEventListener("play",  ()=> st.knob.textContent = "❚❚");
+  audio.addEventListener("pause", ()=> st.knob.textContent = "▶");
+  audio.addEventListener("ended", ()=> st.knob.textContent = "▶");
+
+  st.range.addEventListener("input", () => {
+    st.seeking = true;
+    audio.currentTime = st.range.value/1000 * DATA[key].dur;
+  });
+  st.range.addEventListener("change", ()=> st.seeking=false);
+  el.querySelector(".back").addEventListener("click", ()=> audio.currentTime = Math.max(0, audio.currentTime-5));
+  el.querySelector(".fwd").addEventListener("click",  ()=> audio.currentTime = Math.min(DATA[key].dur, audio.currentTime+5));
+  st.tl.addEventListener("click", ev => {
+    const r = st.tl.getBoundingClientRect();
+    audio.currentTime = (ev.clientX - r.left)/r.width * DATA[key].dur;
+  });
+
+  drawTimelineBase(st);
+});
+
+function fmt(s){ s=Math.max(0,s); const m=Math.floor(s/60); return m+":"+String(Math.floor(s%60)).padStart(2,"0"); }
+
+// decodifica frame de bandas: string de 96 chars -> 48 valores 0-99
+function bandsAt(key, fi){
+  const arr = DATA[key].bands;
+  if (fi<0) fi=0; if (fi>=arr.length) fi=arr.length-1;
+  const s = arr[fi], out = new Float32Array(NB);
+  for (let i=0;i<NB;i++) out[i] = +(s.substr(i*2,2));
+  return out;
+}
+function featAt(key, name, t){
+  const a = DATA[key][name];
+  let fi = Math.floor(t/HOP);
+  if (fi<0) fi=0; if (fi>=a.length) fi=a.length-1;
+  return a[fi];
+}
+function regionAt(key, t){
+  const r = REGIONS[key].find(r=> t>=r.t0 && t<r.t1);
+  return r ? r.lab : "—";
+}
+function lineAt(key, t){
+  const seg = TRANSCRIPTS[key].find(s=> t>=s.t0 && t<=s.t1+0.3);
+  return seg ? "“"+seg.text+"”" : "—";
+}
+
+// ---------- dial ----------
+const TAU = Math.PI*2;
+function ringColor(i, n){
+  // paleta tipo referencia: magenta→rojo→naranja→crema→cian→azul→violeta
+  const hue = (300 + (i/n)*360) % 360;
+  return `hsl(${hue.toFixed(0)},72%,54%)`;
+}
+function drawDial(st){
+  const key = st.key, ctx = st.dial, W=600, C=W/2;
+  const t = st.audio.currentTime;
+  const fi = Math.floor(t/HOP);
+  const target = bandsAt(key, fi);
+  // suavizado: sube rápido, baja lento
+  for (let i=0;i<NB;i++){
+    const v = target[i];
+    st.smooth[i] = v > st.smooth[i] ? st.smooth[i]*0.35 + v*0.65 : st.smooth[i]*0.80 + v*0.20;
+  }
+  ctx.clearRect(0,0,W,W);
+
+  // aro exterior del dial
+  ctx.beginPath(); ctx.arc(C,C,292,0,TAU);
+  ctx.fillStyle="#DDDAD0"; ctx.fill();
+  ctx.beginPath(); ctx.arc(C,C,289,0,TAU);
+  ctx.fillStyle="#F7F5EC"; ctx.fill();
+
+  // espectro: 96 rayos (48 bandas espejadas), estilo skyline en bloques
+  const N=96, r0=170, rMax=115, blockH=9, gap=2.2;
+  for (let s=0;s<N;s++){
+    const bi = s<NB ? s : N-1-s;
+    const v = st.smooth[bi]/99;              // 0..1
+    const len = 8 + v*rMax;
+    const ang = -Math.PI/2 + s/N*TAU;
+    const nBlocks = Math.max(1, Math.round(len/blockH));
+    ctx.save();
+    ctx.translate(C,C); ctx.rotate(ang);
+    ctx.fillStyle = ringColor(s,N);
+    const wBase = 8.5;
+    for (let b=0;b<nBlocks;b++){
+      const rr = r0 + b*blockH;
+      const w = wBase * (1 - b/(nBlocks+3)*0.35);
+      ctx.globalAlpha = 0.55 + 0.45*(1-b/nBlocks);
+      ctx.fillRect(rr, -w/2, blockH-gap, w);
+    }
+    ctx.restore();
+  }
+  ctx.globalAlpha=1;
+
+  // círculo interior con marcas tipo dial Braun
+  ctx.beginPath(); ctx.arc(C,C,r0-12,0,TAU); ctx.fillStyle="#FBFAF3"; ctx.fill();
+  ctx.beginPath(); ctx.arc(C,C,r0-12,0,TAU); ctx.lineWidth=2; ctx.strokeStyle="#C9C6BA"; ctx.stroke();
+  ctx.strokeStyle="#8E938E"; ctx.fillStyle="#6E736E";
+  ctx.font="500 15px Helvetica,Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  const dur = DATA[key].dur;
+  for (let k=0;k<60;k++){
+    const a = -Math.PI/2 + k/60*TAU;
+    const big = k%5===0;
+    const r1 = r0-22, r2 = big? r0-38 : r0-30;
+    ctx.lineWidth = big?2:1;
+    ctx.beginPath();
+    ctx.moveTo(C+Math.cos(a)*r1, C+Math.sin(a)*r1);
+    ctx.lineTo(C+Math.cos(a)*r2, C+Math.sin(a)*r2);
+    ctx.stroke();
+    if (k%10===0){
+      const sec = Math.round(k/60*dur);
+      ctx.fillText(fmt(sec), C+Math.cos(a)*(r0-56), C+Math.sin(a)*(r0-56));
+    }
+  }
+  ctx.font="600 11px Helvetica,Arial";
+  ctx.fillStyle="#9A9F9A";
+  ctx.fillText("MHz", C, C+72);
+
+  // marcas de regiones en el borde del dial interior
+  REGIONS[key].forEach(rg=>{
+    const a = -Math.PI/2 + rg.t0/dur*TAU;
+    ctx.strokeStyle="#C9A227"; ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(C+Math.cos(a)*(r0-22), C+Math.sin(a)*(r0-22));
+    ctx.lineTo(C+Math.cos(a)*(r0-40), C+Math.sin(a)*(r0-40));
+    ctx.stroke();
+  });
+
+  // aguja roja = posición de reproducción
+  const pa = -Math.PI/2 + (t/dur)*TAU;
+  ctx.save();
+  ctx.translate(C,C); ctx.rotate(pa);
+  ctx.fillStyle="var(--accent)"; ctx.fillStyle="#D0342C";
+  ctx.fillRect(-1.8, -(r0-20), 3.6, r0-20-44);
+  ctx.restore();
+}
+
+// ---------- línea de tiempo dBFS ----------
+function drawTimelineBase(st){
+  const key=st.key, cv=st.tl, ctx=cv.getContext("2d");
+  const W=cv.width, H=cv.height, db=DATA[key].dbfs, dur=DATA[key].dur;
+  ctx.clearRect(0,0,W,H);
+  // regiones
+  REGIONS[key].forEach((rg,ix)=>{
+    ctx.fillStyle = ix%2? "rgba(201,162,39,.10)" : "rgba(142,147,142,.08)";
+    ctx.fillRect(rg.t0/dur*W, 0, (rg.t1-rg.t0)/dur*W, H);
+    ctx.fillStyle="#9A9F8E";
+    ctx.font="500 15px Helvetica,Arial"; ctx.textAlign="left";
+    ctx.fillText(rg.lab.toUpperCase(), rg.t0/dur*W+6, 18);
+  });
+  // curva dBFS (piso -50)
+  ctx.beginPath();
+  const lo=-50, hi=-15;
+  for (let i=0;i<db.length;i++){
+    const x = (i*HOP)/dur*W;
+    const y = H - Math.min(1,Math.max(0,(db[i]-lo)/(hi-lo)))*(H-26) - 4;
+    i? ctx.lineTo(x,y) : ctx.moveTo(x,y);
+  }
+  ctx.strokeStyle="#8E938E"; ctx.lineWidth=1.6; ctx.stroke();
+  st.tlBase = ctx.getImageData(0,0,W,H);
+}
+function drawTimeline(st){
+  const ctx = st.tl.getContext("2d");
+  ctx.putImageData(st.tlBase,0,0);
+  const x = st.audio.currentTime/DATA[st.key].dur * st.tl.width;
+  ctx.fillStyle="#D0342C";
+  ctx.fillRect(x-1.5,0,3,st.tl.height);
+}
+
+// ---------- bucle ----------
+function loop(){
+  KEYS.forEach(key=>{
+    const st=R[key], t=st.audio.currentTime;
+    drawDial(st);
+    drawTimeline(st);
+    // dBFS suavizado para lectura
+    const db = featAt(key,"dbfs",t);
+    st.sdb = st.sdb*0.6 + db*0.4;
+    const shown = Math.max(-60, st.sdb);
+    st.vdb.innerHTML = shown.toFixed(1)+" <small>dBFS</small>";
+    st.bari.style.width = (Math.min(1,Math.max(0,(shown+50)/35))*100).toFixed(1)+"%";
+    const f0 = featAt(key,"f0",t);
+    st.vf0.innerHTML = f0>0 ? Math.round(f0)+" <small>Hz</small>" : "— <small>sin voz</small>";
+    st.vce.innerHTML = Math.round(featAt(key,"centroid",t))+" <small>Hz</small>";
+    st.vre.textContent = regionAt(key,t);
+    st.tx.textContent = lineAt(key,t);
+    if (!st.seeking) st.range.value = t/DATA[key].dur*1000;
+    st.cur.textContent = fmt(t);
+  });
+  requestAnimationFrame(loop);
+}
+loop();
+
+// ---------- panel de análisis ----------
+document.getElementById("analysis").innerHTML = __ANALYSIS__;
+</script>
+</body>
+</html>
